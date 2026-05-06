@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Forward Trust Propagation Output Schema",
+  "description": "A03 output: trusted pool and per-parameter trust analysis",
+  "type": "object",
+  "required": ["trusted_pool", "parameter_analysis", "at_risk_parameters", "trusted_parameters", "output_only_safe_parameters"],
+  "properties": {
+    "trusted_pool": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pool_id", "origin_anchor", "propagation_chain"],
+        "properties": {
+          "pool_id": {"type": "string", "pattern": "^TP[0-9]{3}$"},
+          "origin_anchor": {"type": "string", "minLength": 1},
+          "propagation_chain": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["step", "node_id", "line", "anchor_usage", "expression", "trust_effect", "pool_members_added", "trust_rule_applied", "code_snippet", "file"],
+              "properties": {
+                "step": {"type": "number", "minimum": 1},
+                "node_id": {"type": "string"},
+                "line": {"type": "number"},
+                "anchor_usage": {"type": "string", "enum": ["assignment", "query_constraint", "guard_condition", "post_filter", "param_override", "approval_initiation", "rpc_identity_propagation", "transform"]},
+                "expression": {"type": "string", "minLength": 1},
+                "trust_effect": {"type": "string", "minLength": 1},
+                "pool_members_added": {"type": "array", "items": {"type": "string"}},
+                "trust_rule_applied": {"type": "string", "pattern": "^R(1[0]?|[1-9])$"},
+                "code_snippet": {"type": "string", "minLength": 1},
+                "file": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameter_analysis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["param", "semantic_role", "propagation_path", "datasinks_reached", "final_trust_status", "trust_chain"],
+        "properties": {
+          "param": {"type": "string", "minLength": 1},
+          "semantic_role": {"type": "string"},
+          "propagation_path": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["step", "node_id", "line", "usage", "expression", "at_this_point", "code_snippet", "file"],
+              "properties": {
+                "step": {"type": "number"},
+                "node_id": {"type": "string"},
+                "line": {"type": "number"},
+                "usage": {"type": "string", "enum": ["pass_to_sub_call", "assignment", "query_constraint", "condition_check", "return_output", "transform", "closure_capture"]},
+                "expression": {"type": "string"},
+                "at_this_point": {"type": "string", "enum": ["trusted", "untrusted", "unresolved", "output_only_safe"]},
+                "trust_rule": {"type": ["string", "null"], "pattern": "^(R(1[0]?|[1-9])|null)$"},
+                "code_snippet": {"type": "string", "minLength": 1},
+                "file": {"type": "string", "minLength": 1}
+              }
+            }
+          },
+          "datasinks_reached": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["node_id", "line", "type", "expression", "auth_bound", "code_snippet", "file"],
+              "properties": {
+                "node_id": {"type": "string"},
+                "line": {"type": "number"},
+                "type": {"type": "string", "enum": ["db_read", "db_write", "file_read", "file_write", "rpc_call", "network_connect", "approval_flow", "mass_assignment", "auth_decision"]},
+                "expression": {"type": "string"},
+                "auth_bound": {"type": "boolean"},
+                "bound_anchor": {"type": ["string", "null"]},
+                "bound_trust_rule": {"type": ["string", "null"]},
+                "code_snippet": {"type": "string", "minLength": 1},
+                "file": {"type": "string", "minLength": 1}
+              }
+            }
+          },
+          "final_trust_status": {"type": "string", "enum": ["trusted", "at_risk", "output_only_safe", "unresolved"]},
+          "trust_chain": {"type": "string", "minLength": 1},
+          "unresolved_reason": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "at_risk_parameters": {"type": "array", "items": {"type": "string"}},
+    "trusted_parameters": {"type": "array", "items": {"type": "string"}},
+    "output_only_safe_parameters": {"type": "array", "items": {"type": "string"}}
+  }
+}

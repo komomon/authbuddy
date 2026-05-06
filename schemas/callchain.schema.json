@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Call Chain Output Schema",
+  "description": "A02-CallChain output: complete call graph from entry function with argument mappings",
+  "type": "object",
+  "required": ["entry_node_id", "nodes", "edges", "unresolved_calls"],
+  "properties": {
+    "entry_node_id": {"type": "string", "pattern": "^N[0-9]{3}$"},
+    "nodes": {
+      "type": "object",
+      "patternProperties": {
+        "^N[0-9]{3}$": {
+          "type": "object",
+          "required": ["function", "file", "line_start", "line_end", "signature", "call_type_markers", "is_project_code", "code_snippet"],
+          "properties": {
+            "function": {"type": "string", "minLength": 1},
+            "file": {"type": "string", "minLength": 1},
+            "line_start": {"type": "number", "minimum": 1},
+            "line_end": {"type": "number", "minimum": 1},
+            "signature": {"type": "string", "minLength": 1},
+            "annotations": {"type": "array", "items": {"type": "string"}},
+            "call_type_markers": {"type": "array", "items": {"type": "string", "enum": ["super_call", "interface_dispatch", "lambda", "reflection"]}},
+            "override_of": {"type": ["string", "null"]},
+            "parent_class": {"type": "string"},
+            "is_project_code": {"type": "boolean"},
+            "termination": {"type": ["string", "null"], "enum": ["external", "pure_static", "recursive", "accessor", "leaf", null]},
+            "code_snippet": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["caller_node_id", "call_site_line", "caller_branch_context", "callee_node_id", "callee_expression", "argument_mappings", "code_snippet"],
+        "properties": {
+          "caller_node_id": {"type": "string", "pattern": "^N[0-9]{3}$"},
+          "call_site_line": {"type": "number", "minimum": 1},
+          "caller_branch_context": {"type": "string", "enum": ["if", "else", "try", "catch", "finally", "loop", "switch", "unconditional"]},
+          "callee_node_id": {"type": "string", "pattern": "^N[0-9]{3}$"},
+          "callee_expression": {"type": "string", "minLength": 1},
+          "argument_mappings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["to_param", "from_expression"],
+              "properties": {
+                "to_param": {"type": "string"},
+                "from_expression": {"type": "string"}
+              }
+            }
+          },
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "unresolved_calls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["caller_node_id", "call_site_line", "expression", "reason", "why_unresolvable", "code_snippet"],
+        "properties": {
+          "caller_node_id": {"type": "string", "pattern": "^N[0-9]{3}$"},
+          "call_site_line": {"type": "number", "minimum": 1},
+          "expression": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "enum": ["interface_dispatch_unresolvable", "reflection_runtime_only", "lambda_unresolvable", "dynamic_proxy", "deferred_binding"]},
+          "candidate_implementations": {"type": "array", "items": {"type": "string"}},
+          "why_unresolvable": {"type": "string", "minLength": 1},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

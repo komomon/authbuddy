@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Backward Output Verification Schema",
+  "description": "A04b output: verification audit of backward.json",
+  "type": "object",
+  "required": ["overall_pass", "output_field_coverage_issues", "false_safe_judgments", "boolean_deep_analysis_gaps", "approval_flow_missed", "multi_source_field_issues", "review_notes"],
+  "properties": {
+    "overall_pass": {"type": "boolean"},
+    "output_field_coverage_issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["issue", "field_path", "severity", "code_snippet"],
+        "properties": {
+          "issue": {"type": "string", "minLength": 1},
+          "field_path": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "false_safe_judgments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field_path", "current_judgment", "reason_current", "issue", "severity", "code_snippet"],
+        "properties": {
+          "field_path": {"type": "string"},
+          "current_judgment": {"type": "string"},
+          "reason_current": {"type": "string"},
+          "issue": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "boolean_deep_analysis_gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field_path", "issue", "severity", "code_snippet"],
+        "properties": {
+          "field_path": {"type": "string"},
+          "issue": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "approval_flow_missed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field_path", "issue", "severity", "code_snippet"],
+        "properties": {
+          "field_path": {"type": "string"},
+          "issue": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "multi_source_field_issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field_path", "issue", "severity", "code_snippet"],
+        "properties": {
+          "field_path": {"type": "string"},
+          "issue": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "review_notes": {"type": "array", "items": {"type": "string"}}
+  }
+}

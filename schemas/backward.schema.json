@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Backward Output Tracing Schema",
+  "description": "A04 output: per-output-field backward trust trace",
+  "type": "object",
+  "required": ["output_fields", "fields_at_risk", "fields_output_only_safe", "fields_static_safe", "fields_trusted", "fields_unresolved"],
+  "properties": {
+    "output_fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field_path", "primitive_type", "source_kind", "final_judgment", "trust_chain", "code_snippet"],
+        "properties": {
+          "field_path": {"type": "string", "minLength": 1},
+          "primitive_type": {"type": "string"},
+          "source_node_id": {"type": "string"},
+          "source_expression": {"type": "string"},
+          "source_kind": {"type": "string", "enum": ["db_query_result_field", "db_query_result", "rpc_response_field", "computed", "static_constant", "literal", "user_input_echo", "stored_context_field", "auth_anchor_direct"]},
+          "source_query_node_id": {"type": ["string", "null"]},
+          "source_query_bound_to_anchor": {"type": ["boolean", "null"]},
+          "source_query_bound_anchors": {"type": "array", "items": {"type": "string"}},
+          "computation_path": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["step", "node_id", "line", "expression", "code_snippet", "file"],
+              "properties": {
+                "step": {"type": "number"},
+                "node_id": {"type": "string"},
+                "line": {"type": "number"},
+                "expression": {"type": "string"},
+                "depends_on": {"type": "array", "items": {"type": "string"}},
+                "code_snippet": {"type": "string"},
+                "file": {"type": "string"}
+              }
+            }
+          },
+          "deep_analysis": {
+            "type": "object",
+            "required": ["applicable"],
+            "properties": {
+              "applicable": {"type": "boolean"},
+              "judgment_basis": {"type": "string"},
+              "auth_bound": {"type": "boolean"},
+              "trust_rule": {"type": "string"}
+            }
+          },
+          "final_judgment": {"type": "string", "enum": ["trusted", "at_risk", "output_only_safe", "static_safe", "unresolved"]},
+          "trust_chain": {"type": "string", "minLength": 1},
+          "risk_reason": {"type": ["string", "null"]},
+          "file": {"type": "string"},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "fields_at_risk": {"type": "array", "items": {"type": "string"}},
+    "fields_output_only_safe": {"type": "array", "items": {"type": "string"}},
+    "fields_static_safe": {"type": "array", "items": {"type": "string"}},
+    "fields_trusted": {"type": "array", "items": {"type": "string"}},
+    "fields_unresolved": {"type": "array", "items": {"type": "string"}}
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Final Report Schema",
+  "description": "A05 output: structured audit report",
+  "type": "object",
+  "required": ["endpoint", "audit_timestamp", "audit_summary", "scenarios_found", "scenarios_not_found", "parameters_matrix", "output_fields_matrix", "limitations"],
+  "properties": {
+    "endpoint": {"type": "string", "minLength": 1},
+    "audit_timestamp": {"type": "string", "minLength": 1},
+    "audit_summary": {
+      "type": "object",
+      "required": ["framework", "auth_anchors", "total_params", "total_output_fields", "scenarios_found_count", "scenarios_checked"],
+      "properties": {
+        "framework": {
+          "type": "object",
+          "required": ["name", "language"],
+          "properties": {
+            "name": {"type": "string"},
+            "language": {"type": "string"}
+          }
+        },
+        "auth_anchors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "source_type", "credible"],
+            "properties": {
+              "name": {"type": "string"},
+              "source_type": {"type": "string"},
+              "credible": {"type": "boolean"}
+            }
+          }
+        },
+        "total_params": {"type": "number", "minimum": 0},
+        "total_output_fields": {"type": "number", "minimum": 0},
+        "scenarios_found_count": {"type": "number", "minimum": 0},
+        "scenarios_checked": {"type": "array", "items": {"type": "string", "pattern": "^S[1-8]$"}}
+      }
+    },
+    "scenarios_found": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["scenario_id", "scenario_name", "severity", "description", "evidence_chain", "fix_suggestion"],
+        "properties": {
+          "scenario_id": {"type": "string", "pattern": "^S[1-8]$"},
+          "scenario_name": {"type": "string"},
+          "severity": {"type": "string", "enum": ["critical", "high", "medium", "low", "info"]},
+          "description": {"type": "string", "minLength": 1},
+          "risk_parameters": {"type": "array", "items": {"type": "string"}},
+          "risk_output_fields": {"type": "array", "items": {"type": "string"}},
+          "evidence_chain": {
+            "type": "object",
+            "required": ["recon", "forward", "backward"],
+            "properties": {
+              "recon": {"type": "object"},
+              "forward": {"type": "object"},
+              "backward": {"type": "object"}
+            }
+          },
+          "trust_chain_visual": {"type": "string"},
+          "attack_scenario": {"type": "string"},
+          "fix_suggestion": {"type": "string", "minLength": 1},
+          "fix_code_snippet": {"type": "string"}
+        }
+      }
+    },
+    "scenarios_not_found": {"type": "array", "items": {"type": "string"}},
+    "parameters_matrix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["param", "semantic_role", "final_trust_status", "trust_chain"],
+        "properties": {
+          "param": {"type": "string"},
+          "semantic_role": {"type": "string"},
+          "final_trust_status": {"type": "string"},
+          "datasinks_reached": {"type": "array"},
+          "trust_chain": {"type": "string"}
+        }
+      }
+    },
+    "output_fields_matrix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field_path", "primitive_type", "source_kind", "final_judgment", "trust_chain"],
+        "properties": {
+          "field_path": {"type": "string"},
+          "primitive_type": {"type": "string"},
+          "source_kind": {"type": "string"},
+          "final_judgment": {"type": "string"},
+          "trust_chain": {"type": "string"}
+        }
+      }
+    },
+    "inconsistencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "description"],
+        "properties": {
+          "type": {"type": "string"},
+          "description": {"type": "string"}
+        }
+      }
+    },
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "extended_knowledge_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pattern_name", "description"],
+        "properties": {
+          "pattern_name": {"type": "string"},
+          "description": {"type": "string"},
+          "evidence": {"type": "string"},
+          "suggested_category": {"type": "string"}
+        }
+      }
+    }
+  }
+}

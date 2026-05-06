@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Entry Analysis Output Schema",
+  "description": "A01-Entry output: all input parameters expanded to primitives with semantic roles",
+  "type": "object",
+  "required": ["entry_function", "entry_signature_code_snippet", "parameters", "unexpanded_parameters"],
+  "properties": {
+    "entry_function": {"type": "string", "minLength": 1},
+    "entry_signature_code_snippet": {"type": "string", "minLength": 1},
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "primitive_type", "source", "semantic_role", "pii", "nullable", "code_snippet"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "primitive_type": {"type": "string", "enum": ["String", "int", "long", "boolean", "double", "float", "File", "InputStream", "byte[]", "List", "Map", "Object"]},
+          "source": {"type": "string", "enum": ["path_variable", "query_param", "header", "cookie", "body_field", "multipart_form", "session_derived", "token_derived", "internal_context"]},
+          "source_annotation": {"type": "string"},
+          "semantic_role": {"type": "string", "enum": ["resource_identifier", "relationship_context", "scope_range", "identity", "auth_credential", "action", "data_payload", "file_content", "filter", "pagination", "sorting", "callback_url", "metadata", "configuration"]},
+          "pii": {"type": "boolean"},
+          "nullable": {"type": "boolean"},
+          "default_value": {"type": ["string", "null"]},
+          "entry_file": {"type": "string"},
+          "entry_line": {"type": "number"},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "unexpanded_parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "primitive_type", "reason_not_expanded"],
+        "properties": {
+          "name": {"type": "string"},
+          "primitive_type": {"type": "string"},
+          "reason_not_expanded": {"type": "string", "enum": ["nested_too_deep", "external_dependency", "circular_reference"]},
+          "note": {"type": "string"}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Recon Output Schema",
+  "description": "A00-Recon output: endpoint context, framework info, auth anchors, interceptor chain",
+  "type": "object",
+  "required": ["endpoint", "framework", "auth_context", "interceptor_chain", "route_config"],
+  "properties": {
+    "endpoint": {
+      "type": "object",
+      "required": ["identifier", "entry_file", "entry_function", "entry_line", "entry_line_end", "code_snippet"],
+      "properties": {
+        "identifier": {"type": "string", "minLength": 1},
+        "http_method": {"type": "string", "enum": ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]},
+        "entry_file": {"type": "string", "minLength": 1},
+        "entry_function": {"type": "string", "minLength": 1},
+        "entry_line": {"type": "number", "minimum": 1},
+        "entry_line_end": {"type": "number", "minimum": 1},
+        "code_snippet": {"type": "string", "minLength": 1}
+      }
+    },
+    "framework": {
+      "type": "object",
+      "required": ["name", "language"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "version_hint": {"type": "string"},
+        "language": {"type": "string", "minLength": 1}
+      }
+    },
+    "auth_context": {
+      "type": "object",
+      "required": ["auth_anchors", "global_filters"],
+      "properties": {
+        "auth_anchors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "source_type", "acquisition_chain", "acquisition_file", "acquisition_line", "code_snippet", "credibility_checklist"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "source_type": {"type": "string", "enum": ["session", "token", "internal_sdk", "config", "rpc_context", "jwt_claim"]},
+              "acquisition_chain": {"type": "array", "items": {"type": "string"}},
+              "acquisition_file": {"type": "string", "minLength": 1},
+              "acquisition_line": {"type": "number", "minimum": 1},
+              "code_snippet": {"type": "string", "minLength": 1},
+              "credibility_checklist": {
+                "type": "object",
+                "required": ["has_noLogin_fallback", "has_user_input_fallback", "has_gray_toggle", "has_conditional_bypass"],
+                "properties": {
+                  "has_noLogin_fallback": {"type": "boolean"},
+                  "has_user_input_fallback": {"type": "boolean"},
+                  "has_gray_toggle": {"type": "boolean"},
+                  "has_conditional_bypass": {"type": "boolean"},
+                  "credibility_notes": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "global_filters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["class", "file", "line", "method", "role", "code_snippet"],
+            "properties": {
+              "class": {"type": "string"},
+              "file": {"type": "string"},
+              "line": {"type": "number"},
+              "method": {"type": "string"},
+              "role": {"type": "string", "enum": ["session_enforcement", "param_override", "token_verify", "rbac_check", "audit_log"]},
+              "code_snippet": {"type": "string"}
+            }
+          }
+        },
+        "annotations_on_endpoint": {"type": "array", "items": {"type": "string"}},
+        "annotations_on_class": {"type": "array", "items": {"type": "string"}},
+        "auth_framework_notes": {"type": "string"}
+      }
+    },
+    "interceptor_chain": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["order", "class", "file", "line", "method", "has_super_call", "role_hint", "code_snippet"],
+        "properties": {
+          "order": {"type": "number", "minimum": 1},
+          "class": {"type": "string"},
+          "file": {"type": "string"},
+          "line": {"type": "number"},
+          "method": {"type": "string"},
+          "has_super_call": {"type": "boolean"},
+          "super_class": {"type": ["string", "null"]},
+          "super_file": {"type": ["string", "null"]},
+          "super_method": {"type": ["string", "null"]},
+          "super_line": {"type": ["number", "null"]},
+          "role_hint": {"type": "string"},
+          "code_snippet": {"type": "string"}
+        }
+      }
+    },
+    "route_config": {
+      "type": "object",
+      "required": ["source", "file", "line", "pattern"],
+      "properties": {
+        "source": {"type": "string"},
+        "file": {"type": "string"},
+        "line": {"type": "number"},
+        "pattern": {"type": "string"}
+      }
+    }
+  }
+}

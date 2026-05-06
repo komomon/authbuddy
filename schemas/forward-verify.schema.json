@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Forward Trust Verification Output Schema",
+  "description": "A03b output: verification audit of forward.json",
+  "type": "object",
+  "required": ["overall_pass", "missed_anchors", "false_trust_assignments", "missed_datasinks", "super_chain_gaps", "transitive_trust_misuse", "redundant_defense_false_positives", "approval_flow_missed", "review_notes"],
+  "properties": {
+    "overall_pass": {"type": "boolean"},
+    "missed_anchors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["anchor_name", "issue", "severity"],
+        "properties": {
+          "anchor_name": {"type": "string"},
+          "issue": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]}
+        }
+      }
+    },
+    "false_trust_assignments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["param", "current_judgment", "reason_current", "issue", "severity", "code_snippet"],
+        "properties": {
+          "param": {"type": "string"},
+          "current_judgment": {"type": "string"},
+          "reason_current": {"type": "string"},
+          "issue": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "missed_datasinks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["node_id", "expression", "type", "note", "severity", "code_snippet"],
+        "properties": {
+          "node_id": {"type": "string"},
+          "expression": {"type": "string"},
+          "type": {"type": "string"},
+          "note": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "super_chain_gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["node_id", "issue", "severity", "code_snippet"],
+        "properties": {
+          "node_id": {"type": "string"},
+          "issue": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "transitive_trust_misuse": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["node_id", "current_judgment", "issue", "severity", "code_snippet"],
+        "properties": {
+          "node_id": {"type": "string"},
+          "current_judgment": {"type": "string"},
+          "issue": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "redundant_defense_false_positives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["param", "issue", "severity", "code_snippet"],
+        "properties": {
+          "param": {"type": "string"},
+          "issue": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "approval_flow_missed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["node_id", "issue", "severity", "code_snippet"],
+        "properties": {
+          "node_id": {"type": "string"},
+          "issue": {"type": "string", "minLength": 1},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]},
+          "code_snippet": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "review_notes": {"type": "array", "items": {"type": "string"}}
+  }
+}
