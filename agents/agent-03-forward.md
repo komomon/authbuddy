@@ -104,7 +104,7 @@ For each datasink reached:
 3. If the query has no identity constraint → `auth_bound: false`
 4. Record `bound_anchor` and `bound_trust_rule`
 
-### Stage 2.3: Determine Final Trust Status
+### Stage 2.3: Determine Final Trust Status and Confidence
 
 | Status | When |
 |--------|------|
@@ -112,6 +112,16 @@ For each datasink reached:
 | `at_risk` | Parameter reaches datasink with NO anchor binding → potential vulnerability |
 | `output_only_safe` | Parameter only echoed in output, never used in datasink constraint |
 | `unresolved` | Insufficient information to decide (e.g., unresolved interface dispatch) |
+
+**Confidence:** For each `final_trust_status`, assign a confidence level:
+
+| confidence | Criteria |
+|-----------|----------|
+| `high` | Full trace: all calls resolved, complete data flow from parameter to all datasinks, no gaps |
+| `medium` | Minor gaps: 1-2 unresolved calls but strong surrounding evidence, or 1 branch of a conditional not fully traced |
+| `low` | Significant gaps: multiple unresolved calls, reflection, dynamic dispatch, large code areas skipped. Judgment is TENTATIVE |
+
+**Critical:** A `trusted` judgment with `confidence: low` means "probably safe but I can't prove it." Document what's missing in `confidence_rationale`.
 
 **Trust chain format:** Write as a human-readable chain: `anchor_name → (how) → intermediate → (how) → final_status`
 
@@ -174,6 +184,8 @@ Write to: **`forward.json`**
         }
       ],
       "final_trust_status": "string (trusted/at_risk/output_only_safe/unresolved)",
+      "confidence": "string (high/medium/low — completeness of the trace)",
+      "confidence_rationale": "string (why this confidence level — what was/wasn't traced)",
       "trust_chain": "string (complete trust chain description)",
       "unresolved_reason": "string|null (explain what info is missing if unresolved)"
     }

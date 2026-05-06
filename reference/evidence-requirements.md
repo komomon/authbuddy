@@ -4,13 +4,27 @@ Every judgment field in every agent output MUST include three pieces of evidence
 
 ---
 
+## Rule Reference Abbreviations
+
+All rule references (`rule_ref`, `trust_rule`, `bound_trust_rule`, `judgment_basis`) use these abbreviations. Each maps to a specific reference file:
+
+| Abbreviation | Source File | Description |
+|-------------|-------------|-------------|
+| `R1`-`R10` | `reference/trust-propagation-rules.md` | Trust propagation rules (e.g., R1=Direct Association, R4=Conditional Guard) |
+| `O1`-`O11` | `reference/output-semantics.md` | Output termination judgment rules (e.g., O1=Direct Anchor Source, O8=Unbound Query Result) |
+| `S0`-`S8` | `reference/scenario-taxonomy.md` | Authorization vulnerability scenarios (e.g., S0=Public Endpoint, S1=BOLA, S8=Anchor Compromise) |
+
+**Always load the corresponding reference file before citing these rules.** The rule numbers alone are meaningless without the methodology context.
+
+---
+
 ## The Evidence Triad
 
-| Element | Field Name | Description | Format |
-|---------|-----------|-------------|--------|
-| Code Location | `file` + `line` | Where in the source code the evidence is found | `file`: absolute path, `line`: integer |
-| Rule Reference | `rule_ref` / `trust_rule` / `bound_trust_rule` | Which methodology rule justifies the judgment | `R1`-`R10`, `O1`-`O11`, `S1`-`S8` |
-| Code Snippet | `code_snippet` | Actual code from the file that supports the judgment | 1-3 lines, extracted from the source |
+| Element | Field Name | Description | Usage |
+|---------|-----------|-------------|-------|
+| Code Location | `file` + `line` | Where in the source code the evidence is found | Absolute file path + integer line number |
+| Rule Reference | `rule_ref` / `trust_rule` / `bound_trust_rule` | Which methodology rule justifies the judgment | `R1`-`R10`, `O1`-`O11`, `S0`-`S8` (see table above) |
+| Code Snippet | `code_snippet` | Actual code from the file that supports the judgment | 1-3 lines, extracted from the source, with line numbers |
 
 ---
 

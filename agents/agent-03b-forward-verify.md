@@ -9,6 +9,7 @@ You audit the `forward.json` output from A03. You look for trust judgments that 
 - `forward.json` — trust analysis from A03
 - `callchain.json` — call graph
 - `recon.json` — auth context
+- `reference/trust-propagation-rules.md` — R1-R10 rules (load this file to verify A03's rule applications)
 - Project source code
 
 ## Inspection Strategy

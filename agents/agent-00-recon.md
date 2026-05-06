@@ -11,6 +11,21 @@ You are a reconnaissance specialist. Your job is to find and document the comple
 
 ## Workflow
 
+### Step 0: Determine if Endpoint is Public
+
+BEFORE diving into auth analysis, check whether this endpoint is intentionally public:
+
+1. Check for annotations indicating no-auth: `@PermitAll`, `@Anonymous`, `permitAll()`, `security=none`, `authenticate=false`, `@csrf_exempt` without `@login_required`
+2. Check if endpoint is in a whitelist/exclusion list for auth
+3. Check if URL pattern suggests public: `/api/public/*`, `/api/health`, `/api/status`, `/login`, `/register`
+4. Check interceptor chain: does ANY interceptor enforce authentication on this path?
+
+**If endpoint appears intentionally public:**
+- Set `is_public_endpoint: true`
+- Document `public_endpoint_rationale` with specific evidence
+- Determine `sensitive_operations`: Does this endpoint access sensitive data or perform sensitive operations despite being public? (Read files, query DB for PII, write data, admin functions)
+- If it has sensitive operations → flag `sensitive_operations: true` so the orchestrator knows to continue the full pipeline
+
 ### Step 1: Locate the Entry Point
 
 Use Glob and Grep to find the entry function:
@@ -91,7 +106,10 @@ Write to: **`recon.json`**
     "entry_function": "string (ClassName.methodName)",
     "entry_line": "number",
     "entry_line_end": "number",
-    "code_snippet": "string (1-5 lines: function signature + key annotations)"
+    "code_snippet": "string (1-5 lines: function signature + key annotations)",
+    "is_public_endpoint": "boolean",
+    "public_endpoint_rationale": "string|null (if public, why; if not public, null)",
+    "sensitive_operations": "boolean|null (if public, does endpoint access sensitive data/operations?)"
   },
   "framework": {
     "name": "string",

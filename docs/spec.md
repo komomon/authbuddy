@@ -1,8 +1,16 @@
 # AuthBuddy — 通用越权漏洞审计系统 设计规格书
 
-**版本:** 1.0
+**版本:** 1.1
 **日期:** 2026-05-06
 **状态:** 已确认
+
+**v1.1 变更:**
+- 新增结果目录约定 `results/{endpoint}/`
+- 新增公开端点 (S0) 处理机制
+- 新增所有判断的 `confidence` 字段 (high/medium/low)
+- 新增 `reference/extended-knowledge.md`
+- 新增主 Agent 子 Agent 调用示例
+- 新增跨端点感知说明
 
 ---
 

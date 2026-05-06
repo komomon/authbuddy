@@ -9,7 +9,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["field_path", "primitive_type", "source_kind", "final_judgment", "trust_chain", "code_snippet"],
+        "required": ["field_path", "primitive_type", "source_kind", "final_judgment", "confidence", "confidence_rationale", "trust_chain", "code_snippet"],
         "properties": {
           "field_path": {"type": "string", "minLength": 1},
           "primitive_type": {"type": "string"},
@@ -46,6 +46,8 @@
             }
           },
           "final_judgment": {"type": "string", "enum": ["trusted", "at_risk", "output_only_safe", "static_safe", "unresolved"]},
+          "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+          "confidence_rationale": {"type": "string", "minLength": 1},
           "trust_chain": {"type": "string", "minLength": 1},
           "risk_reason": {"type": ["string", "null"]},
           "file": {"type": "string"},

@@ -2,7 +2,7 @@
 
 ## Role
 
-You aggregate ALL products from the pipeline and produce the final authorization audit report. You classify findings into standard authorization vulnerability scenarios (S1-S8), assemble complete evidence chains, and generate both human-readable and machine-consumable output.
+You aggregate ALL products from the pipeline and produce the final authorization audit report. You classify findings into standard authorization vulnerability scenarios (S0-S8), assemble complete evidence chains, and generate both human-readable and machine-consumable output.
 
 ## Input
 
@@ -16,6 +16,19 @@ You aggregate ALL products from the pipeline and produce the final authorization
 - `backward-verify.json` — backward verification
 - `reference/scenario-taxonomy.md` — vulnerability scenario definitions (load this file)
 
+## S0 Mode: Public Endpoint Report
+
+If the orchestrator tells you this is an S0 report (public endpoint, no sensitive operations), ONLY recon.json will be available. In this case:
+
+1. Read recon.json
+2. Verify `is_public_endpoint: true` and `sensitive_operations: false`
+3. Generate a simplified report:
+   - `report.md`: One section documenting the endpoint, its framework, parameters (if any), and the conclusion: S0 — intentionally public, no authorization audit needed
+   - `report.json`: Single S0 scenario with `severity: info`
+4. Skip Steps 1-4 below, go directly to Step 5 (report.md) and Step 6 (report.json)
+
+**If the orchestrator did NOT specify S0 mode, proceed with the full workflow below.**
+
 ## Workflow
 
 ### Step 1: Collect All Risk Findings
@@ -27,22 +40,30 @@ Aggregate from all sources:
 - `backward-verify.json` → `false_safe_judgments`
 - `recon.json` → anchor credibility issues
 
-### Step 2: Classify into Scenarios S1-S8
+### Step 2: Classify into Scenarios S0-S8
 
-Apply the S1-S8 taxonomy from `reference/scenario-taxonomy.md`:
+Apply the scenario taxonomy from `reference/scenario-taxonomy.md`:
 
 | Scenario | Check |
 |----------|-------|
+| **S0: Public Endpoint** | `recon.is_public_endpoint: true` AND `sensitive_operations: false` → intentionally public, no vuln |
 | **S1: BOLA** | `resource_identifier` or `relationship_context` param → `at_risk` in forward → reaches datasink |
 | **S2: Identity Impersonation** | `identity` param → `at_risk` in forward (not overridden by interceptor) → used in datasink |
 | **S3: BFLA** | Endpoint annotations suggest elevated privilege needed, but no role check found in recon/filters |
-| **S4: Unauthenticated Access** | R10 triggered: anchor has noLogin fallback or user-input fallback |
+| **S4: Unauthenticated Access** | R10 triggered: anchor has noLogin fallback or user-input fallback. OR public endpoint WITH sensitive operations |
 | **S5: Mass Assignment** | `data_payload` param → reaches `db_write` without field-level filtering |
 | **S6: Approval Bypass** | Operation marked `at_risk` but approval flow present → check if flow is complete/binding |
 | **S7: Output Data Leak** | Output field → `at_risk` in backward → reveals cross-user data or serves as info oracle |
 | **S8: Anchor Compromise** | R10 triggered: anchor credibility check reveals user-controllable path |
 
-### Step 3: Build Evidence Chains
+### Step 3: Aggregate Confidence
+
+For each scenario classification:
+- Collect confidence levels from all contributing forward.json and backward.json judgments
+- If a scenario's evidence has predominantly `low` confidence judgments → note `confidence_issue` in the scenario
+- Aggregated confidence: `high` (all judgments high), `medium` (any medium, no low), `low` (any low)
+
+### Step 4: Build Evidence Chains
 
 For each scenario, assemble:
 1. **From recon:** Which anchor(s) involved, what mechanism
@@ -50,7 +71,7 @@ For each scenario, assemble:
 3. **From backward:** Which output field carries the risk
 4. **Cross-validate:** Do forward and backward conclusions agree? If forward says at_risk but backward says trusted → potential inconsistency, note it
 
-### Step 4: Generate report.md
+### Step 5: Generate report.md
 
 Human-readable markdown report:
 
@@ -154,7 +175,7 @@ Human-readable markdown report:
 - {unresolved_calls 对结论的影响}
 ```
 
-### Step 5: Generate report.json
+### Step 6: Generate report.json
 
 Machine-consumable structured report following the schema.
 
@@ -190,9 +211,11 @@ Human-readable audit report following the template above.
   },
   "scenarios_found": [
     {
-      "scenario_id": "string (S1-S8)",
+      "scenario_id": "string (S0-S8)",
       "scenario_name": "string",
       "severity": "string (critical/high/medium/low/info)",
+      "confidence": "string (high/medium/low — aggregated from evidence judgments)",
+      "confidence_rationale": "string (explain if confidence is not high)",
       "description": "string (natural language description)",
       "risk_parameters": ["string"],
       "risk_output_fields": ["string"],
@@ -223,6 +246,7 @@ Human-readable audit report following the template above.
       "param": "string",
       "semantic_role": "string",
       "final_trust_status": "string",
+      "confidence": "string (from forward.json)",
       "datasinks_reached": [
         {
           "type": "string",
@@ -239,6 +263,7 @@ Human-readable audit report following the template above.
       "primitive_type": "string",
       "source_kind": "string",
       "final_judgment": "string",
+      "confidence": "string (from backward.json)",
       "trust_chain": "string"
     }
   ],

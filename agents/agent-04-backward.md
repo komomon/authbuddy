@@ -13,7 +13,7 @@ An output field is safe if its value was bound to the current user's identity so
 - `recon.json` — auth anchors
 - `callchain.json` — call graph
 - `forward.json` — trusted pool and parameter analysis
-- `reference/output-semantics.md` — output analysis methodology
+- `reference/output-semantics.md` — O1-O11 output analysis methodology (load this file)
 
 ## Workflow
 
@@ -123,6 +123,18 @@ Check:
 - Does a boolean return value reveal whether a resource exists (even if the user shouldn't know)?
 - Flag these in the `risk_reason` as potential information oracle.
 
+### Step 7: Assign Confidence
+
+For each `final_judgment`, assign a confidence level:
+
+| confidence | Criteria |
+|-----------|----------|
+| `high` | Full backward trace: all field sources traced to terminals, all branches covered, all computation inputs identified |
+| `medium` | Minor gaps: one branch of a conditional not fully traced, or one intermediate source not fully resolved |
+| `low` | Significant gaps: field source is from an unresolved call, or computation path has untraced dependencies |
+
+**Critical:** A `trusted` or `static_safe` judgment with `confidence: low` is a red flag — it means "probably safe but I can't prove the full source chain."
+
 ## Output
 
 Write to: **`backward.json`**
@@ -159,6 +171,8 @@ Write to: **`backward.json`**
         "trust_rule": "string|null"
       },
       "final_judgment": "string (trusted/at_risk/output_only_safe/static_safe/unresolved)",
+      "confidence": "string (high/medium/low — completeness of the backward trace)",
+      "confidence_rationale": "string (why this confidence — what was/wasn't traced)",
       "trust_chain": "string (complete backward trust chain description)",
       "risk_reason": "string|null (MUST be non-null if at_risk, with file + line + code)",
       "file": "string (key evidence file)",

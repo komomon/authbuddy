@@ -10,6 +10,7 @@ You audit the `backward.json` output from A04. You look for output fields that w
 - `forward.json` — for cross-referencing trusted pool
 - `callchain.json` — call graph
 - `recon.json` — auth context
+- `reference/output-semantics.md` — O1-O11 rules (load this file to verify A04's judgment applications)
 - Project source code (entry function + return type class)
 
 ## Inspection Strategy

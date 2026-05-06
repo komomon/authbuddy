@@ -34,16 +34,18 @@
         "total_params": {"type": "number", "minimum": 0},
         "total_output_fields": {"type": "number", "minimum": 0},
         "scenarios_found_count": {"type": "number", "minimum": 0},
-        "scenarios_checked": {"type": "array", "items": {"type": "string", "pattern": "^S[1-8]$"}}
+        "scenarios_checked": {"type": "array", "items": {"type": "string", "pattern": "^S[0-8]$"}}
       }
     },
     "scenarios_found": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["scenario_id", "scenario_name", "severity", "description", "evidence_chain", "fix_suggestion"],
+        "required": ["scenario_id", "scenario_name", "severity", "confidence", "description", "evidence_chain", "fix_suggestion"],
         "properties": {
-          "scenario_id": {"type": "string", "pattern": "^S[1-8]$"},
+          "scenario_id": {"type": "string", "pattern": "^S[0-8]$"},
+          "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+          "confidence_rationale": {"type": "string"},
           "scenario_name": {"type": "string"},
           "severity": {"type": "string", "enum": ["critical", "high", "medium", "low", "info"]},
           "description": {"type": "string", "minLength": 1},
@@ -70,11 +72,12 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["param", "semantic_role", "final_trust_status", "trust_chain"],
+        "required": ["param", "semantic_role", "final_trust_status", "confidence", "trust_chain"],
         "properties": {
           "param": {"type": "string"},
           "semantic_role": {"type": "string"},
           "final_trust_status": {"type": "string"},
+          "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
           "datasinks_reached": {"type": "array"},
           "trust_chain": {"type": "string"}
         }
@@ -84,12 +87,13 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["field_path", "primitive_type", "source_kind", "final_judgment", "trust_chain"],
+        "required": ["field_path", "primitive_type", "source_kind", "final_judgment", "confidence", "trust_chain"],
         "properties": {
           "field_path": {"type": "string"},
           "primitive_type": {"type": "string"},
           "source_kind": {"type": "string"},
           "final_judgment": {"type": "string"},
+          "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
           "trust_chain": {"type": "string"}
         }
       }

@@ -39,7 +39,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["param", "semantic_role", "propagation_path", "datasinks_reached", "final_trust_status", "trust_chain"],
+        "required": ["param", "semantic_role", "propagation_path", "datasinks_reached", "final_trust_status", "confidence", "confidence_rationale", "trust_chain"],
         "properties": {
           "param": {"type": "string", "minLength": 1},
           "semantic_role": {"type": "string"},
@@ -80,6 +80,8 @@
             }
           },
           "final_trust_status": {"type": "string", "enum": ["trusted", "at_risk", "output_only_safe", "unresolved"]},
+          "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+          "confidence_rationale": {"type": "string", "minLength": 1},
           "trust_chain": {"type": "string", "minLength": 1},
           "unresolved_reason": {"type": ["string", "null"]}
         }

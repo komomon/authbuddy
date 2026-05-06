@@ -1,6 +1,27 @@
-# Authorization Vulnerability Scenario Taxonomy (S1-S8)
+# Authorization Vulnerability Scenario Taxonomy (S0-S8)
 
-Eight standard authorization vulnerability scenarios. Report findings by mapping to these scenarios.
+Nine authorization vulnerability scenarios. Report findings by mapping to these scenarios.
+
+---
+
+## S0: Public Endpoint (公开端点)
+
+**Definition:** An endpoint that is intentionally public — no authentication is required or expected. This is NOT a vulnerability; it's a confirmation that the endpoint is designed for unauthenticated access.
+
+**Trigger conditions:**
+- `recon.endpoint.is_public_endpoint` = `true`
+- `recon.endpoint.sensitive_operations` = `false`
+- Endpoint has annotations like `@PermitAll`, `@Anonymous`, `permitAll()`
+- OR endpoint is in an auth exclusion/whitelist
+- OR URL pattern indicates public: `/api/public/*`, `/login`, `/health`
+
+**Severity:** `info` — informational only, not a vulnerability.
+
+**When to ESCALATE to S4:**
+- Public endpoint accesses sensitive data (PII, internal data)
+- Public endpoint performs write operations
+- Public endpoint provides admin-level functionality
+- In these cases, the DESIGN is the vulnerability → escalate to S4: Unauthenticated Access to sensitive operations.
 
 ---
 
